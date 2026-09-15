@@ -48,6 +48,26 @@
       });
     }
 
+    function createPresetButtons(values, inputNumber, inputRange, wrapper){
+      const presets = [1, 5, 10];
+      const presDiv = document.createElement('div');
+      presDiv.className = 'presets';
+      presets.forEach(p => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'preset-btn';
+        b.textContent = p;
+        b.addEventListener('click', ()=>{
+          inputNumber.value = p;
+          if(inputRange) inputRange.value = p;
+          // disparar input para atualizar visual
+          inputNumber.dispatchEvent(new Event('input'));
+        });
+        presDiv.appendChild(b);
+      });
+      wrapper.appendChild(presDiv);
+    }
+
     function loadFormula(id){
       const formula = formulas.get(id);
       if(!formula) return;
@@ -65,12 +85,44 @@
         div.className = 'var-item';
         const label = document.createElement('label');
         label.textContent = `${v.nome} (${v.unidade || ''})`;
+
+        // Contêiner para controles (numero + range + presets)
+        const controls = document.createElement('div');
+        controls.className = 'var-controls';
+
         const input = document.createElement('input');
         input.type = 'number';
         input.step = 'any';
         input.placeholder = v.nome;
         input.id = `var-${v.key}`;
         input.dataset.key = v.key;
+        input.classList.add('primary-input'); // marcar como input principal
+
+        controls.appendChild(input);
+
+        // Se for raio e visualização de círculo, adicionar slider e presets
+        let inputRange = null;
+        if(formula.tipoVisualizacao === 'circulo' && v.key === 'r'){
+          inputRange = document.createElement('input');
+          inputRange.type = 'range';
+          inputRange.min = '0';
+          inputRange.max = '100';
+          inputRange.step = '0.1';
+          inputRange.value = '0';
+          inputRange.className = 'range-input';
+          inputRange.dataset.key = v.key;
+
+          // sincronizar range -> number
+          inputRange.addEventListener('input', ()=>{
+            input.value = inputRange.value;
+            input.dispatchEvent(new Event('input'));
+          });
+
+          controls.appendChild(inputRange);
+
+          // presets
+          createPresetButtons(null, input, inputRange, controls);
+        }
 
         // mensagem de erro
         const err = document.createElement('div');
@@ -78,7 +130,7 @@
         err.style.display = 'none';
 
         div.appendChild(label);
-        div.appendChild(input);
+        div.appendChild(controls);
         div.appendChild(err);
         wrapper.appendChild(div);
 
@@ -88,6 +140,8 @@
           if(formula.tipoVisualizacao === 'circulo' && v.key === 'r'){
             visual.drawCircle(isNaN(val) ? 0 : val);
             qs('#visual-raio').textContent = `Raio: ${isNaN(val) ? '—' : val}`;
+            // manter range sincronizado se existir
+            if(inputRange && inputRange.value !== String(input.value)) inputRange.value = input.value || '0';
           }
         });
       });
@@ -95,12 +149,12 @@
       // Botão calcular
       const btnCalc = qs('#btn-calcular');
       btnCalc.onclick = ()=>{
-        // coletar valores
+        // coletar valores — apenas inputs marcados como primary-input
         const values = {};
         let valid = true;
-        wrapper.querySelectorAll('input').forEach(input =>{
+        wrapper.querySelectorAll('input.primary-input').forEach(input =>{
           const key = input.dataset.key;
-          const err = input.parentElement.querySelector('.error');
+          const err = input.parentElement.parentElement.querySelector('.error');
           const raw = input.value.trim();
           if(raw === ''){
             valid = false;
@@ -129,7 +183,7 @@
 
         qs('#resultado-valor').textContent = `${apresentacao}`;
         qs('#resultado-explicacao').textContent = formula.explicacaoResultado ? formula.explicacaoResultado(values, resultadoInterno) : '';
-        qs('#visual-area').textContent = `Área: ${apresentacao}`;
+        qs('#visual-area').textContent = (formula.id === 'area_circulo') ? `Área: ${apresentacao}` : `Valor: ${apresentacao}`;
 
         // atualizar visualização final
         if(formula.tipoVisualizacao === 'circulo'){

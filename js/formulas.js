@@ -40,4 +40,25 @@
     tipoVisualizacao: 'circulo'
   });
 
+  // Registrar uma segunda fórmula: Perímetro do círculo (circunferência)
+  registry.add({
+    id: 'perimetro_circulo',
+    nome: 'Perímetro do círculo',
+    categoria: 'Geometria',
+    formula: 'P = 2 × π × r',
+    descricao: 'Calcula o perímetro (circunferência) de um círculo a partir do raio.',
+    variaveis: [
+      { key: 'r', nome: 'raio', descricao: 'Raio do círculo', unidade: 'unidades' }
+    ],
+    calcular(values){
+      const r = Number(values.r);
+      return 2 * Math.PI * r;
+    },
+    explicacaoResultado: function(values, resultado){
+      return `O perímetro (circunferência) é 2πr. Com r = ${values.r}, P = 2 × π × ${values.r} = ${resultado}`;
+    },
+    exemplo: 'Ex: r = 5 → P = 2 × π × 5 ≈ 31,42',
+    tipoVisualizacao: 'circulo'
+  });
+
 })();
