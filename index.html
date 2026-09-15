@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Game-Mática — Fórmulas na Prática</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <main class="container">
+    <!-- Tela inicial -->
+    <section id="tela-inicial" class="screen">
+      <h1 class="title">Game-Mática</h1>
+      <p class="subtitle">Aprenda matemática usando fórmulas que funcionam — transforme variáveis em ações e visualizações.</p>
+      <button id="btn-comecar" class="btn primary">Começar</button>
+
+      <div class="categories">
+        <h2>Categorias (em breve)</h2>
+        <ul>
+          <li>Aritmética</li>
+          <li>Geometria</li>
+          <li>Álgebra</li>
+          <li>Funções</li>
+          <li>Trigonometria</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Tela de jogo -->
+    <section id="tela-jogo" class="screen hidden">
+      <header class="game-header">
+        <button id="btn-voltar" class="btn link">← Voltar</button>
+        <h2 id="formula-nome">Área do círculo</h2>
+      </header>
+
+      <article class="formula-card">
+        <div class="formula-highlight" id="formula-expressao">A = π × r²</div>
+        <p id="formula-descricao">Calcula a área de um círculo.</p>
+
+        <div id="variaveis-wrapper" class="variaveis"></div>
+
+        <div class="actions">
+          <button id="btn-calcular" class="btn primary">Calcular</button>
+        </div>
+
+        <div id="resultado" class="resultado">
+          <h3>Resultado</h3>
+          <div id="resultado-valor" class="resultado-valor">—</div>
+          <div id="resultado-explicacao" class="resultado-explicacao"></div>
+        </div>
+
+        <div class="visualizacao">
+          <h3>Visualização</h3>
+          <canvas id="canvas-circulo" width="600" height="400"></canvas>
+          <div class="visual-info">
+            <span id="visual-raio">Raio: —</span>
+            <span id="visual-area">Área: —</span>
+          </div>
+        </div>
+
+      </article>
+
+    </section>
+
+  </main>
+
+  <script src="js/formulas.js"></script>
+  <script src="js/visualizacoes.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>
