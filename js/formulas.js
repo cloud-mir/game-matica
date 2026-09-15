@@ -26,7 +26,7 @@
     formula: 'A = π × r²',
     descricao: 'Calcula a área de um círculo a partir do raio.',
     variaveis: [
-      { key: 'r', nome: 'raio', descricao: 'Raio do círculo (mesma unidade do resultado dividido por área ao quadrado)', unidade: 'unidades' }
+      { key: 'r', nome: 'raio', descricao: 'Raio do círculo', unidade: 'unidades', min: 0, max: 100, step: 0.1, presets: [1,5,10] }
     ],
     // calcular deve retornar o número com precisão completa (não arredondado)
     calcular(values){
@@ -48,7 +48,7 @@
     formula: 'P = 2 × π × r',
     descricao: 'Calcula o perímetro (circunferência) de um círculo a partir do raio.',
     variaveis: [
-      { key: 'r', nome: 'raio', descricao: 'Raio do círculo', unidade: 'unidades' }
+      { key: 'r', nome: 'raio', descricao: 'Raio do círculo', unidade: 'unidades', min: 0, max: 200, step: 0.1, presets: [1,5,10] }
     ],
     calcular(values){
       const r = Number(values.r);

@@ -3,12 +3,16 @@
   const visual = {
     canvas: null,
     ctx: null,
+    zoom: 1,
     init(canvasId){
       this.canvas = document.getElementById(canvasId);
       if(!this.canvas) return;
       this.ctx = this.canvas.getContext('2d');
       this.resize();
       window.addEventListener('resize', ()=> this.resize());
+    },
+    setZoom(factor){
+      this.zoom = Number(factor) || 1;
     },
     resize(){
       if(!this.canvas || !this.ctx) return;
@@ -26,13 +30,12 @@
     clear(){
       if(!this.ctx) return;
       const ctx = this.ctx;
-      // limpar usando as dimensões em CSS pixels
       const cw = this.canvas.width / (window.devicePixelRatio || 1);
       const ch = this.canvas.height / (window.devicePixelRatio || 1);
       ctx.clearRect(0,0,cw,ch);
     },
-    // Desenha um círculo proporcional ao raio informado
-    drawCircle(radius){
+    // Desenha um círculo proporcional ao raio informado (raio em unidades)
+    drawCircle(radiusUnits){
       if(!this.ctx || !this.canvas) return;
       const ctx = this.ctx;
       const dpr = window.devicePixelRatio || 1;
@@ -44,16 +47,25 @@
       const cx = cw / 2;
       const cy = ch / 2;
 
-      // Define escala: queremos que o círculo caiba no canvas com folga
+      // Define espaço disponível (em pixels)
       const padding = 20;
       const maxDrawable = Math.min(cx, cy) - padding;
 
-      const r = Math.max(0, Number(radius));
-      // Evitar divisão por zero e mapear raio real para pixels
-      const drawR = (r === 0) ? 6 : Math.min(maxDrawable, r);
+      const rUnits = Math.max(0, Number(radiusUnits));
 
-      // Se r for maior que maxDrawable, queremos reduzir proporcionalmente para caber
-      const finalR = (r > maxDrawable && r !== 0) ? maxDrawable : drawR;
+      // Calcular pixels-por-unidade (ppu) para caber o raio no canvas
+      let ppu = 1; // pixels por unidade
+      if(rUnits === 0){
+        ppu = 1 * this.zoom; // default
+      } else {
+        ppu = (maxDrawable / rUnits) * this.zoom;
+      }
+
+      // limitar ppu para evitar círculos invisíveis
+      const maxPpu = 500; // arbitrary cap
+      ppu = Math.max(0.01, Math.min(maxPpu, ppu));
+
+      const finalR = Math.max(6, rUnits * ppu); // at least 6px visible
 
       // Fundo sutil
       ctx.fillStyle = 'rgba(255,255,255,0.02)';
@@ -82,10 +94,10 @@
       ctx.fillStyle = 'rgba(16,185,129,1)';
       ctx.fill();
 
-      // Texto do raio
+      // Texto do raio (em unidades)
       ctx.fillStyle = 'rgba(230,238,248,0.95)';
       ctx.font = '14px sans-serif';
-      ctx.fillText(`r = ${radius}`, cx + finalR + 8, cy + 5);
+      ctx.fillText(`r = ${radiusUnits}`, cx + finalR + 8, cy + 5);
 
       ctx.restore();
     }
