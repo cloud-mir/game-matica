@@ -12,18 +12,41 @@
     const formulas = window.FormulasRegistry;
     const visual = window.Visualizacoes;
 
+    const selectFormula = qs('#select-formula');
+
     visual.init('canvas-circulo');
 
     btnComecar.addEventListener('click', ()=>{
       telaInicial.classList.add('hidden');
       telaJogo.classList.remove('hidden');
-      loadFormula('area_circulo');
+      populateFormulaSelect();
+      // iniciar com a fórmula padrão
+      const defaultId = 'area_circulo';
+      selectFormula.value = defaultId;
+      loadFormula(defaultId);
     });
 
     btnVoltar.addEventListener('click', ()=>{
       telaJogo.classList.add('hidden');
       telaInicial.classList.remove('hidden');
     });
+
+    // Preenche o select com as fórmulas do registry
+    function populateFormulaSelect(){
+      const list = formulas.list();
+      selectFormula.innerHTML = '';
+      list.forEach(f => {
+        const opt = document.createElement('option');
+        opt.value = f.id;
+        opt.textContent = `${f.nome} (${f.categoria || 'Geral'})`;
+        selectFormula.appendChild(opt);
+      });
+
+      selectFormula.addEventListener('change', ()=>{
+        const id = selectFormula.value;
+        loadFormula(id);
+      });
+    }
 
     function loadFormula(id){
       const formula = formulas.get(id);
@@ -113,8 +136,6 @@
           visual.drawCircle(values.r);
         }
 
-        // guardar (poderemos usar esse resultado no futuro para desafios)
-        // Exemplo: window.lastResult = { formulaId: formula.id, values, resultadoInterno };
         window.lastResult = { formulaId: formula.id, values, resultadoInterno };
       };
 
