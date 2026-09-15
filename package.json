@@ -1,0 +1,31 @@
+{
+  "name": "game-matica",
+  "version": "1.0.0",
+  "description": "Jogo educativo de matemática — transformar fórmulas em interações de jogo",
+  "type": "module",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage",
+    "lint": "eslint src --fix"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "^9.3.3",
+    "@vitejs/plugin-vue": "^4.5.0",
+    "eslint": "^8.54.0",
+    "vitest": "^1.0.4"
+  },
+  "keywords": [
+    "educativo",
+    "matemática",
+    "jogo",
+    "fórmulas",
+    "geometria"
+  ],
+  "author": "cloud-mir",
+  "license": "MIT"
+}
